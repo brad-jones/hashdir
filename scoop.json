@@ -1,0 +1,15 @@
+{
+  "version": "v${VERSION}",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/brad-jones/hashdir-cli/releases/download/v${VERSION}/hashdir_windows_amd64.zip",
+      "bin": [
+        "hashdir.exe"
+      ],
+      "hash": "${HASH}"
+    }
+  },
+  "homepage": "https://github.com/brad-jones/hashdir-cli",
+  "license": "MIT",
+  "description": "CLI that generates a hash of an entire directory"
+}

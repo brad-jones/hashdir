@@ -1,0 +1,9 @@
+# spec: https://golangci-lint.run/usage/configuration/
+
+linters:
+  enable:
+    - gofmt
+
+linters-settings:
+  gofmt:
+    simplify: true

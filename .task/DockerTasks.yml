@@ -1,0 +1,23 @@
+# spec: https://taskfile.dev/#/usage
+version: "3"
+
+tasks:
+  push-devcontainer:
+    interactive: true
+    cmds:
+      - docker build -t ghcr.io/brad-jones/hashdir/devcontainer:latest .devcontainer
+      - docker push ghcr.io/brad-jones/hashdir/devcontainer:latest
+
+  clean:
+    deps:
+      - { task: delete-remote-image, vars: { IMAGE_NAME: "devcontainer" } }
+
+  delete-remote-image:
+    label: delete-remote-{{.IMAGE_NAME}}
+    prefix: delete-remote-{{.IMAGE_NAME}}
+    cmds:
+      - |
+        curl -v -X DELETE \
+          -H "Authorization: token ${DOCKER_TOKEN}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/users/brad-jones/packages/container/hashdir%2F{{.IMAGE_NAME}}

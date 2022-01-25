@@ -1,0 +1,37 @@
+# spec: https://taskfile.dev/#/usage
+version: "3"
+
+tasks:
+  docker:
+    desc: Publishes a new docker image containing our tool.
+    cmds:
+      - docker push ghcr.io/brad-jones/hashdir/cli:{{.VERSION}}
+      - docker push ghcr.io/brad-jones/hashdir/cli:latest
+
+  brew:
+    desc: Publishes a new homebrew ruby Formula.
+    env:
+      HASH:
+        sh: sha256sum ./bin/hashdir_darwin_amd64.tar.gz | xargs | awk '{print $1}'
+    cmds:
+      - rm -rf ./tmp-brew
+      - git clone --progress https://x-access-token:${GITHUB_TOKEN}@github.com/brad-jones/homebrew-tap.git ./tmp-brew
+      - envsubst '${VERSION},${HASH}' <./brew.rb >./tmp-brew/Formula/hashdir.rb
+      - cd ./tmp-brew && git add ./Formula/hashdir.rb
+      - 'cd ./tmp-brew && git commit -m "update(hashdir): {{.VERSION}}"'
+      - cd ./tmp-brew && git push origin master
+      - rm -rf ./tmp-brew
+
+  scoop:
+    desc: Publishes a new scoop manifest.
+    env:
+      HASH:
+        sh: sha256sum ./bin/hashdir_windows_amd64.zip | xargs | awk '{print $1}'
+    cmds:
+      - rm -rf ./tmp-scoop
+      - git clone --progress https://x-access-token:${GITHUB_TOKEN}@github.com/brad-jones/scoop-bucket.git ./tmp-scoop
+      - envsubst '${VERSION},${HASH}' <./scoop.json >./tmp-scoop/hashdir.json
+      - cd ./tmp-scoop && git add hashdir.json
+      - 'cd ./tmp-scoop && git commit -m "update(hashdir): {{.VERSION}}"'
+      - cd ./tmp-scoop && git push origin master
+      - rm -rf ./tmp-scoop

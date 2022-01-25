@@ -1,0 +1,57 @@
+# spec: https://taskfile.dev/#/usage
+version: "3"
+
+tasks:
+  nfpm:
+    desc: Creates apk, deb, rpm packages for the built binaries.
+    deps:
+      - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: amd64 } }
+    cmds:
+      - nfpm pkg --target ./bin/hashdir_linux_amd64.rpm
+      - nfpm pkg --target ./bin/hashdir_linux_amd64.deb
+      - nfpm pkg --target ./bin/hashdir_linux_amd64.apk
+
+  tarball:
+    desc: Creates plain old tarballs for the built binaries.
+    deps:
+      - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: amd64 } }
+      - { task: ":build:cmd", vars: { GOOS: darwin, GOARCH: amd64 } }
+      - { task: ":build:cmd", vars: { GOOS: darwin, GOARCH: arm64 } }
+    cmds:
+      - tar -czvf ./bin/hashdir_linux_amd64.tar.gz ./bin/hashdir_linux_amd64 --transform=s,./bin/hashdir_linux_amd64,hashdir,
+      - tar -czvf ./bin/hashdir_darwin_amd64.tar.gz ./bin/hashdir_darwin_amd64 --transform=s,./bin/hashdir_darwin_amd64,hashdir,
+      - tar -czvf ./bin/hashdir_darwin_arm64.tar.gz ./bin/hashdir_darwin_arm64 --transform=s,./bin/hashdir_darwin_arm64,hashdir,
+
+  zip:
+    desc: Creates a ZIP archive for the Windows binary.
+    deps:
+      - { task: ":build:cmd", vars: { GOOS: windows, GOARCH: amd64 } }
+    cmds:
+      - zip ./bin/hashdir_windows_amd64.zip ./bin/hashdir_windows_amd64.exe
+      - echo -e "@ bin/hashdir_windows_amd64.exe\n@=hashdir.exe\n" | zipnote -w ./bin/hashdir_windows_amd64.zip
+
+  docker:
+    desc: Builds a docker image that contains our cli tool.
+    deps:
+      - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: amd64 } }
+    cmds:
+      - |
+        docker build -f ./Dockerfile \
+          -t hashdir:latest \
+          -t hashdir:{{.VERSION}} \
+          -t ghcr.io/brad-jones/hashdir/cli:latest \
+          -t ghcr.io/brad-jones/hashdir/cli:{{.VERSION}} \
+          ./bin
+
+  calcsums:
+    desc: Generates the hashdir_checksums.txt file.
+    deps:
+      - nfpm
+      - tarball
+      - zip
+    cmds:
+      - |
+        cd ./bin &&
+        rm -f hashdir_checksums.txt &&
+        sha256sum * > /tmp/hashdir_checksums.txt &&
+        mv /tmp/hashdir_checksums.txt hashdir_checksums.txt

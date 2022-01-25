@@ -1,0 +1,90 @@
+# spec: https://taskfile.dev/#/usage
+version: "3"
+
+dotenv: [".env"]
+output: prefixed
+run: when_changed
+
+includes:
+  build: ./.task/BuildTasks.yml
+  docker: ./.task/DockerTasks.yml
+  lint: ./.task/LintTasks.yml
+  package: ./.task/PackageTasks.yml
+  publish: ./.task/PublishTasks.yml
+
+vars:
+  VERSION: '{{default "0.0.0-local" .VERSION}}'
+env:
+  VERSION: "{{.VERSION}}"
+
+tasks:
+  onboard:
+    desc: Executes on "postAttachCommand" to setup our hooks and other stuff
+    interactive: true
+    cmds:
+      - gh auth login
+      - lefthook install
+      - git config core.eol "lf"
+      - git config core.autocrlf "false"
+      - git config pull.rebase "true"
+      - git config push.default "simple"
+      - git config commit.template $PWD/.gitmessagetpl
+      # The "device" token requested by "gh auth login" does
+      # not yet work with ghcr.io so for now we need another
+      # normal PAT if we want to interact with ghcr.io
+      # see: https://bit.ly/2YZnM7K
+      - echo ${DOCKER_TOKEN} | docker login ghcr.io -u USERNAME --password-stdin
+
+  clean:
+    desc: Run this to remove all build cache (local & remote)
+    cmds:
+      - go clean -cache
+      - rm -rf ./bin
+      - rm -rf ./.task/checksums
+      - task: docker:clean
+
+  lint:
+    desc: Executes all our lint tasks in parallel
+    deps:
+      - lint:commit-msg
+      - lint:commit-msg-pr
+      - lint:dprint
+      - lint:go
+      - lint:shellcheck
+      - lint:shfmt
+
+  build:
+    desc: Builds all of our artifacts
+    deps:
+      - { task: build:cmd, vars: { GOOS: linux, GOARCH: amd64 } }
+      - { task: build:cmd, vars: { GOOS: darwin, GOARCH: amd64 } }
+      - { task: build:cmd, vars: { GOOS: darwin, GOARCH: arm64 } }
+      - { task: build:cmd, vars: { GOOS: windows, GOARCH: amd64 } }
+
+  test:
+    desc: Runs the end to end test suite for this project
+    silent: true
+    cmds:
+      - cd ./tests && go test -v
+
+  package:
+    desc: Executes all our package tasks in parallel
+    deps:
+      - package:calcsums
+      - package:docker
+
+  prepare-release:
+    desc: This is what semantic-release executes for the "prepareCmd" hook
+    deps:
+      - lint
+      - build
+    cmds:
+      - task: test
+      - task: package
+
+  publish-release:
+    desc: This is what semantic-release executes for the "publishCmd" hook
+    deps:
+      - publish:brew
+      - publish:scoop
+      - publish:docker

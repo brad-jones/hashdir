@@ -1,0 +1,84 @@
+# spec: https://taskfile.dev/#/usage
+version: "3"
+
+tasks:
+  fix:
+    desc: Attempts to fix all lint & style errors automatically
+    cmds:
+      - dprint fmt
+      - shfmt -s -l -w .
+      - cd ./cmd && golangci-lint run --fix
+      - cd ./tests && golangci-lint run --fix
+
+  dprint:
+    desc: Executes dprint in "check" mode
+    cmds:
+      - dprint check
+
+  shfmt:
+    desc: Executes shfmt in "diff" mode against all shell files in the repo
+    cmds:
+      - shfmt -s -d .
+
+  shellcheck:
+    desc: Executes shellcheck against all shell files in the repo
+    cmds:
+      - shellcheck $(shfmt -f .)
+
+  go:
+    desc: Executes golangci-lint over both the src and tests
+    cmds:
+      # It's actually faster to run these commands serially, not sure why???
+      - golangci-lint run
+      - cd ./cmd && golangci-lint run
+      - cd ./tests && golangci-lint run
+
+  commit-msg:
+    desc: This is what the github action pipeline runs to enforce the commit convention
+    vars:
+      GIT_EMPTY_SHA: "0000000000000000000000000000000000000000"
+      BEFORE:
+        sh: echo $GITHUB_CONTEXT | jq -r '.event.before'
+      FORCED:
+        sh: echo $GITHUB_CONTEXT | jq -r '.event.forced'
+    silent: true
+    cmds:
+      - |
+        if [ "${GITHUB_EVENT_NAME:-}" == "push" ]; then
+          from="{{.BEFORE}}"
+
+          if [ "{{.FORCED}}" == "true" ]; then
+            echo "Commit was forced, checking only the latest commit from push instead of a range of commit messages."
+            echo "When a commit is forced, the "before" field from the push event may point to a commit that doesn't exist."
+            from="null"
+          fi
+
+          if [ "${from}" == "{{.GIT_EMPTY_SHA}}" ]; then
+            echo "Checking only the latest commit from push instead of a range of commit messages, as this is the very first commit."
+            from="null"
+          fi
+
+          if [ "${from}" == "null" ]; then
+            git log -1 --pretty='%B' | commitlint -V
+          else
+            echo "FROM=${from}"
+            echo "TO=${GITHUB_SHA}"
+            commitlint -V --from "${from}" --to "${GITHUB_SHA}"
+          fi
+        fi
+
+  commit-msg-pr:
+    desc: Make sure a PR title+body will conform to the commit convention once squash merged
+    vars:
+      PR_TITLE:
+        sh: echo $GITHUB_CONTEXT | jq -r '.event.pull_request.title'
+      PR_NUMBER:
+        sh: echo $GITHUB_CONTEXT | jq -r '.event.pull_request.number'
+      PR_BODY:
+        sh: echo $GITHUB_CONTEXT | jq -r '.event.pull_request.body'
+    silent: true
+    cmds:
+      - |
+        if [ "${GITHUB_EVENT_NAME:-}" == "pull_request" ]; then
+          echo -e "{{.PR_TITLE}} (#{{.PR_NUMBER}})\n\n{{.PR_BODY}}" | commitlint -V
+        fi

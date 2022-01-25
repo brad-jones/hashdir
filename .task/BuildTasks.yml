@@ -1,0 +1,34 @@
+# spec: https://taskfile.dev/#/usage
+version: "3"
+
+tasks:
+  cmd:
+    desc: Builds the hashdir-cli for the given GOOS, GOARCH & VERSION
+    vars:
+      GOOS: "{{default OS .GOOS}}"
+      GOARCH: "{{default ARCH .GOARCH}}"
+    env:
+      GOOS: "{{.GOOS}}"
+      GOARCH: "{{.GOARCH}}"
+    label: build_{{.GOOS}}_{{.GOARCH}}
+    prefix: build_{{.GOOS}}_{{.GOARCH}}
+    silent: true
+    cmds:
+      - |
+        cd ./cmd &&
+        go build -v \
+          -ldflags "-X main.version={{.VERSION}}" \
+          -o ../bin/hashdir_{{.GOOS}}_{{.GOARCH}} \
+          .
+      - |
+        {{if eq .GOOS "windows"}}
+          mv \
+            ./bin/hashdir_{{.GOOS}}_{{.GOARCH}} \
+            ./bin/hashdir_{{.GOOS}}_{{.GOARCH}}.exe
+        {{end}}
+    sources:
+      - ./go.*
+      - ./*.go
+      - ./cmd/**/*
+    generates:
+      - ./bin/hashdir_{{.GOOS}}_{{.GOARCH}}

@@ -1,3 +1,16 @@
+### [1.0.1](https://github.com/brad-jones/hashdir/compare/v1.0.0...v1.0.1) (2022-01-28)
+
+
+### Bug Fixes
+
+* go back to github token for docker auth ([20be144](https://github.com/brad-jones/hashdir/commit/20be144867a118a4cf23f542b207915119351765))
+
+
+### Automation
+
+* **deps:** bump tj-actions/changed-files from 13.1 to 14.1 ([#4](https://github.com/brad-jones/hashdir/issues/4)) ([606c5a0](https://github.com/brad-jones/hashdir/commit/606c5a078a83d589f6319ae7013d45688d1af9c8)), closes [tj-actions/changed-files#329](https://github.com/tj-actions/changed-files/issues/329) [tj-actions/changed-files#330](https://github.com/tj-actions/changed-files/issues/330) [tj-actions/changed-files#326](https://github.com/tj-actions/changed-files/issues/326) [tj-actions/changed-files#327](https://github.com/tj-actions/changed-files/issues/327) [tj-actions/changed-files#316](https://github.com/tj-actions/changed-files/issues/316) [tj-actions/changed-files#317](https://github.com/tj-actions/changed-files/issues/317) [tj-actions/changed-files#318](https://github.com/tj-actions/changed-files/issues/318) [tj-actions/changed-files#319](https://github.com/tj-actions/changed-files/issues/319) [tj-actions/changed-files#320](https://github.com/tj-actions/changed-files/issues/320) [tj-actions/changed-files#321](https://github.com/tj-actions/changed-files/issues/321) [tj-actions/changed-files#322](https://github.com/tj-actions/changed-files/issues/322) [tj-actions/changed-files#323](https://github.com/tj-actions/changed-files/issues/323) [tj-actions/changed-files#319](https://github.com/tj-actions/changed-files/issues/319) [tj-actions/changed-files#321](https://github.com/tj-actions/changed-files/issues/321) [#331](https://github.com/brad-jones/hashdir/issues/331) [#330](https://github.com/brad-jones/hashdir/issues/330) [#329](https://github.com/brad-jones/hashdir/issues/329) [#328](https://github.com/brad-jones/hashdir/issues/328) [#327](https://github.com/brad-jones/hashdir/issues/327) [#326](https://github.com/brad-jones/hashdir/issues/326) [#325](https://github.com/brad-jones/hashdir/issues/325) [#324](https://github.com/brad-jones/hashdir/issues/324) [#314](https://github.com/brad-jones/hashdir/issues/314) [#331](https://github.com/brad-jones/hashdir/issues/331) [#330](https://github.com/brad-jones/hashdir/issues/330) [#329](https://github.com/brad-jones/hashdir/issues/329) [#328](https://github.com/brad-jones/hashdir/issues/328) [#327](https://github.com/brad-jones/hashdir/issues/327) [#326](https://github.com/brad-jones/hashdir/issues/326) [#325](https://github.com/brad-jones/hashdir/issues/325) [#324](https://github.com/brad-jones/hashdir/issues/324) [#323](https://github.com/brad-jones/hashdir/issues/323) [#322](https://github.com/brad-jones/hashdir/issues/322)
+* **release:** auth fix for docker, I hope ([2646549](https://github.com/brad-jones/hashdir/commit/264654938a9e9e720e4bcb71974137d203c69471))
+
 ## 1.0.0 (2022-01-25)
 
 

@@ -1,3 +1,10 @@
+### [1.0.2](https://github.com/brad-jones/hashdir/compare/v1.0.1...v1.0.2) (2022-01-28)
+
+
+### Automation
+
+* **devcontainer:** rebuild when the workflow changes too ([cd8a918](https://github.com/brad-jones/hashdir/commit/cd8a9181e555ba5e9dcac9d4828e5c8a3bceface))
+
 ### [1.0.1](https://github.com/brad-jones/hashdir/compare/v1.0.0...v1.0.1) (2022-01-28)
 
 

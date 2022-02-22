@@ -1,3 +1,10 @@
+### [1.0.3](https://github.com/brad-jones/hashdir/compare/v1.0.2...v1.0.3) (2022-02-22)
+
+
+### Automation
+
+* **cosign:** added sigstore cli tool to devcontainer ([aafe036](https://github.com/brad-jones/hashdir/commit/aafe03667d463cbcd400b2532404a31ae9bc5af9))
+
 ### [1.0.2](https://github.com/brad-jones/hashdir/compare/v1.0.1...v1.0.2) (2022-01-28)
 
 

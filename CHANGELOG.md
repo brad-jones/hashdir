@@ -1,3 +1,10 @@
+### [1.0.5](https://github.com/brad-jones/hashdir/compare/v1.0.4...v1.0.5) (2022-02-22)
+
+
+### Automation
+
+* **release:** explicitly define package write permissions ([4d63224](https://github.com/brad-jones/hashdir/commit/4d63224870624e5b66bc7bd568df43c7dd69fc8f))
+
 ### [1.0.4](https://github.com/brad-jones/hashdir/compare/v1.0.3...v1.0.4) (2022-02-22)
 
 

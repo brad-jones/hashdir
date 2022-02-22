@@ -4,9 +4,16 @@ version: "3"
 tasks:
   docker:
     desc: Publishes a new docker image containing our tool.
+    env:
+      COSIGN_EXPERIMENTAL: "1"
     cmds:
       - docker push ghcr.io/brad-jones/hashdir/cli:{{.VERSION}}
       - docker push ghcr.io/brad-jones/hashdir/cli:latest
+      - |
+        cosign sign \
+          --oidc-issuer https://token.actions.githubusercontent.com \
+          ghcr.io/brad-jones/hashdir/cli:latest \
+          ghcr.io/brad-jones/hashdir/cli:{{.VERSION}}
 
   brew:
     desc: Publishes a new homebrew ruby Formula.

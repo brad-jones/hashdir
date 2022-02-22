@@ -18,6 +18,8 @@ jobs:
       image: ghcr.io/${{ github.repository }}/devcontainer:latest
       volumes:
         - /var/run/docker.sock:/var/run/docker-host.sock
+    permissions:
+      id-token: write
     steps:
       - id: generate_token
         uses: tibdex/github-app-token@v1.5.1

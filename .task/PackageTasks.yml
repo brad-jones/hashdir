@@ -55,3 +55,19 @@ tasks:
         rm -f hashdir_checksums.txt &&
         sha256sum * > /tmp/hashdir_checksums.txt &&
         mv /tmp/hashdir_checksums.txt hashdir_checksums.txt
+
+  sign:
+    desc: Uses the sigstore to sign all our artifacts
+    deps:
+      - calcsums
+    env:
+      COSIGN_EXPERIMENTAL: "1"
+    cmds:
+      - |
+        for FILE in ./bin/*; do
+          cosign sign-blob \
+            --oidc-issuer https://token.actions.githubusercontent.com \
+            --output-signature "${FILE}.sig" \
+            --output-certificate "${FILE}.pem" \
+            "${FILE}"
+        done

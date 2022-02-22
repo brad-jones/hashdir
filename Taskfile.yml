@@ -70,7 +70,7 @@ tasks:
   package:
     desc: Executes all our package tasks in parallel
     deps:
-      - package:calcsums
+      - package:sign
       - package:docker
 
   prepare-release:

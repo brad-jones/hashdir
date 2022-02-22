@@ -1,3 +1,10 @@
+### [1.0.4](https://github.com/brad-jones/hashdir/compare/v1.0.3...v1.0.4) (2022-02-22)
+
+
+### Automation
+
+* **cosign:** signs all artifacts using gha oidc ([84c087b](https://github.com/brad-jones/hashdir/commit/84c087bda0a9b3466c17267aced1af26acc03c7b))
+
 ### [1.0.3](https://github.com/brad-jones/hashdir/compare/v1.0.2...v1.0.3) (2022-02-22)
 
 

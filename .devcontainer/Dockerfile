@@ -54,6 +54,8 @@ ARG TARGET_SOCKET="/var/run/docker.sock"
 ARG ENTRYPOINT_LOGS="/tmp/entrypoint-logs"
 ARG NFPM_VERSION="2.11.3"
 ARG NFPM_SHA256="da82e726e83b39481e79b160262cf700750ca8b15a62f7bcb65d587f65f508fc"
+ARG COSIGN_VERSION="1.5.2"
+ARG COSIGN_SHA256="080c0ba10674d2909fb3b4b867b102aefa021959edf2696c8cc1ba08e824bccb"
 
 # UPSTREAM IMAGES
 # ------------------------------------------------------------------------------
@@ -228,6 +230,17 @@ RUN echo "${DOCKER_COMPOSE_SHA256} /usr/bin/docker-compose" | sha256sum --check 
 RUN chmod +x /usr/bin/docker-compose
 FROM scratch as docker-compose
 COPY --from=docker-compose-builder /usr/bin/docker-compose /usr/bin/docker-compose
+
+# Install https://github.com/sigstore/cosign
+FROM builder as cosign-builder
+COPY --from=curl / /
+ARG COSIGN_VERSION
+RUN curl -L "https://github.com/sigstore/cosign/releases/download/v${COSIGN_VERSION}/cosign-linux-amd64" -o /usr/bin/cosign
+ARG COSIGN_SHA256
+RUN echo "${COSIGN_SHA256} /usr/bin/cosign" | sha256sum --check --status
+RUN chmod +x /usr/bin/cosign
+FROM scratch as cosign
+COPY --from=cosign-builder /usr/bin/cosign /usr/bin/cosign
 
 # Install https://github.com/goreleaser/nfpm
 FROM builder as nfpm-builder
@@ -494,6 +507,7 @@ ENV CGO_ENABLED="0"
 # Pull in all our results from our builders
 COPY --from=ca-certificates / /
 COPY --from=commitlint / /
+COPY --from=cosign / /
 COPY --from=curl / /
 COPY --from=docker-ce-cli / /
 COPY --from=docker-compose / /
@@ -550,6 +564,7 @@ RUN curl --version && \
   zip --version && \
   unzip --help && \
   envsubst --version && \
+  cosign version && \
   oras version
 
 # Add our devcontainer hook scripts

@@ -11,7 +11,7 @@ jobs:
       volumes:
         - /var/run/docker.sock:/var/run/docker-host.sock
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - run: task lint
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}

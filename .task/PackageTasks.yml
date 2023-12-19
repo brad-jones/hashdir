@@ -6,19 +6,25 @@ tasks:
     desc: Creates apk, deb, rpm packages for the built binaries.
     deps:
       - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: amd64 } }
+      - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: arm64 } }
     cmds:
-      - nfpm pkg --target ./bin/hashdir_linux_amd64.rpm
-      - nfpm pkg --target ./bin/hashdir_linux_amd64.deb
-      - nfpm pkg --target ./bin/hashdir_linux_amd64.apk
+      - nfpm pkg --config nfpm_amd64.yaml --target ./bin/hashdir_linux_amd64.rpm
+      - nfpm pkg --config nfpm_amd64.yaml --target ./bin/hashdir_linux_amd64.deb
+      - nfpm pkg --config nfpm_amd64.yaml --target ./bin/hashdir_linux_amd64.apk
+      - nfpm pkg --config nfpm_arm64.yaml --target ./bin/hashdir_linux_arm64.rpm
+      - nfpm pkg --config nfpm_arm64.yaml --target ./bin/hashdir_linux_arm64.deb
+      - nfpm pkg --config nfpm_arm64.yaml --target ./bin/hashdir_linux_arm64.apk
 
   tarball:
     desc: Creates plain old tarballs for the built binaries.
     deps:
       - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: amd64 } }
+      - { task: ":build:cmd", vars: { GOOS: linux, GOARCH: arm64 } }
       - { task: ":build:cmd", vars: { GOOS: darwin, GOARCH: amd64 } }
       - { task: ":build:cmd", vars: { GOOS: darwin, GOARCH: arm64 } }
     cmds:
       - tar -czvf ./bin/hashdir_linux_amd64.tar.gz ./bin/hashdir_linux_amd64 --transform=s,./bin/hashdir_linux_amd64,hashdir,
+      - tar -czvf ./bin/hashdir_linux_arm64.tar.gz ./bin/hashdir_linux_arm64 --transform=s,./bin/hashdir_linux_arm64,hashdir,
       - tar -czvf ./bin/hashdir_darwin_amd64.tar.gz ./bin/hashdir_darwin_amd64 --transform=s,./bin/hashdir_darwin_amd64,hashdir,
       - tar -czvf ./bin/hashdir_darwin_arm64.tar.gz ./bin/hashdir_darwin_arm64 --transform=s,./bin/hashdir_darwin_arm64,hashdir,
 

@@ -1,0 +1,13 @@
+# nfpm config file: https://github.com/goreleaser/nfpm
+
+name: "hashdir"
+arch: "arm64"
+platform: "linux"
+version: "v${VERSION}"
+maintainer: "Brad Jones <brad@bjc.id.au>"
+description: CLI that generates a hash of an entire directory
+homepage: "https://github.com/brad-jones/hashdir-cli"
+license: "MIT"
+contents:
+  - src: ./bin/hashdir_linux_arm64
+    dst: /usr/local/bin/hashdir

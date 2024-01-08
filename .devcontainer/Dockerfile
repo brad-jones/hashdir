@@ -54,8 +54,8 @@ ARG TARGET_SOCKET="/var/run/docker.sock"
 ARG ENTRYPOINT_LOGS="/tmp/entrypoint-logs"
 ARG NFPM_VERSION="2.11.3"
 ARG NFPM_SHA256="da82e726e83b39481e79b160262cf700750ca8b15a62f7bcb65d587f65f508fc"
-ARG COSIGN_VERSION="1.5.2"
-ARG COSIGN_SHA256="080c0ba10674d2909fb3b4b867b102aefa021959edf2696c8cc1ba08e824bccb"
+ARG COSIGN_VERSION="1.13.2"
+ARG COSIGN_SHA256="9b0f52abb2e6d79529f37646e524a35a409dc811d2cdec7ef5be2dc5130489c0"
 
 # UPSTREAM IMAGES
 # ------------------------------------------------------------------------------
